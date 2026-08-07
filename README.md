@@ -76,9 +76,9 @@ export const prop    = key => obj => obj?.[key];
 ```
 
 ```javascript
-// ============================================================================
+// =====================================================================
 // 1. COMBINATORS & CORE HELPERS
-// ============================================================================
+// =====================================================================
 
 // Type and Instance Check Factories
 const isInstanceOf = ctor => v => typeof ctor !== 'undefined' && ctor !== null && v instanceof ctor;
@@ -107,9 +107,9 @@ export const match = (rules, fallback = v => v) => (val) => {
   return typeof fallback === 'function' ? fallback(val) : fallback;
 };
 
-// ============================================================================
+// =====================================================================
 // 2. BASE PREDICATES (Clean names without 'is')
-// ============================================================================
+// =====================================================================
 
 export const // Primitives & Types
 isString      = isTypeOf('string'),
@@ -125,17 +125,17 @@ isNullish     = v => v == null,
 isDefined     = v => v !== undefined,
 isPrimitive   = v => v !== Object(v);
 
-// Numbers
-export const nan         = Number.isNaN;
-export const number      = and(typeOf('number'), not(nan));
-export const integer     = Number.isInteger;
-export const finite      = Number.isFinite;
-export const float       = and(typeOf('number'), not(nan), not(integer));
-export const even        = and(integer, v => v % 2 === 0);
-export const odd         = and(integer, v => Math.abs(v % 2) === 1);
-export const positive    = and(number, v => v > 0);
-export const negative    = and(number, v => v < 0);
-export const zero        = v => v === 0;
+export const // numbers
+nan           = Number.isNaN,
+isNumber      = and(isTypeOf('number'), not(nan)),
+isInteger     = Number.isInteger,
+isFinite      = Number.isFinite,
+isFloat       = and(isTypeOf('number'), not(nan), not(isInteger)),
+isEven        = and(isInteger, v => v % 2 === 0),
+isOdd         = and(isInteger, v => Math.abs(v % 2) === 1),
+isPositive    = and(isNumber, v => v > 0),
+isNegative    = and(isNumber, v => v < 0),
+isZero        = v => v === 0;
 
 export const numericString = v => string(v) && v.trim() !== '' && !nan(Number(v));
 export const numeric       = or(number, numericString);
@@ -207,9 +207,9 @@ export const entriesList  = v => array(v) && v.every(item => array(item) && item
 export const objectList   = v => array(v) && v.every(object);
 export const stringList   = v => array(v) && v.every(string);
 
-// ============================================================================
+// =====================================================================
 // 3. PREDICATE REGISTRY & DYNAMIC IS PROXY
-// ============================================================================
+// =====================================================================
 
 const predicates = {
   alphaNumeric, array, asyncIterable, base64, bigInt, blank, boolean, buffer,
