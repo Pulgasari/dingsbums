@@ -31,14 +31,15 @@ const toWords = (value) => String(value)
   .split(' ')
   .filter(Boolean);
 
+// :::::: UNARY TRANSFORMS
 
 export const // curried array transformers
 map    = fn         => arr => arr.map(fn),
 filter = predicate  => arr => arr.filter(predicate),
 reduce = (fn, init) => arr => arr.reduce(fn, init);
 
-
 export const // curried string transformers
+capitalize     = str  => String(str).charAt(0).toUpperCase() + String(str).slice(1),
 join           = char => arr => arr.join(char),
 split          = char => str => str.split(char),
 toLowerCase    = str  => str.toLowerCase (),
@@ -51,7 +52,8 @@ toSnakeCase    = str  => toWords(str).join('_'),
 toTitleCase    = str  => toWords(str).map(upperFirst).join(' '),
 trim           = str  => str.trim      (),
 trimEnd        = str  => str.trimEnd   (),
-trimStart      = str  => str.trimStart ();
+trimStart      = str  => str.trimStart (),
+unquote        = str  => String(str).replace(/^(['"`])([\s\S]*)\1$/, '$2');
 
 // Curried object getters
 export const prop    = key => obj => obj?.[key];
@@ -81,16 +83,4 @@ const rawEmails = [
 processEmailList(rawEmails); 
 // Output: ["alice@test.com", "bob@web.de"]
 
-```
-
-```javascript
-
-
-// :::::: UNARY TRANSFORMS
-
-export const
-capitalize     = value => String(value).charAt(0).toUpperCase() + String(value).slice(1),
-
-
-unquote        = value => String(value).replace(/^(['"`])([\s\S]*)\1$/, '$2');
 ```
