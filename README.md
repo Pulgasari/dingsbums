@@ -36,18 +36,19 @@ export const map    = fn         => arr => arr.map(fn);
 export const filter = predicate  => arr => arr.filter(predicate);
 export const reduce = (fn, init) => arr => arr.reduce(fn, init);
 
-// curried string transformers
-export const trim    = str  => str.trim();
-toLowerCase    = value => value.toLowerCase (),
-toUpperCase    = value => value.toUpperCase (),
-toCamelCase    = value => toWords(value).map((word, index) => index ? upperFirst(word) : word).join(''),    
-toConstantCase = value => toWords(value).join('_').toUpperCase(),
-toKebabCase    = value => toWords(value).join('-'),
-toPascalCase   = value => toWords(value).map(upperFirst).join(''),
-toSnakeCase    = value => toWords(value).join('_'),
-toTitleCase    = value => toWords(value).map(upperFirst).join(' '),
-export const split   = char => str => str.split(char);
-export const join    = char => arr => arr.join(char);
+
+export const // curried string transformers
+join           = char => arr => arr.join(char),
+split          = char => str => str.split(char),
+trim           = str  => str.trim(),
+toLowerCase    = str  => value.toLowerCase (),
+toUpperCase    = str  => value.toUpperCase (),
+toCamelCase    = str  => toWords(value).map((word, index) => index ? upperFirst(word) : word).join(''),    
+toConstantCase = str  => toWords(value).join('_').toUpperCase(),
+toKebabCase    = str  => toWords(value).join('-'),
+toPascalCase   = str  => toWords(value).map(upperFirst).join(''),
+toSnakeCase    = str  => toWords(value).join('_'),
+toTitleCase    = str  => toWords(value).map(upperFirst).join(' ');
 
 // Curried object getters
 export const prop    = key => obj => obj?.[key];
