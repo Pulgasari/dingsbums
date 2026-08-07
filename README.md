@@ -18,8 +18,8 @@ export const compose = (...fns) => (initialValue) =>
 // =====================================================================
 
 // Curried array transformers
-export const map    = fn => arr => arr.map(fn);
-export const filter = predicate => arr => arr.filter(predicate);
+export const map    = fn => arr  => arr.map(fn);
+export const filter = predicate  => arr => arr.filter(predicate);
 export const reduce = (fn, init) => arr => arr.reduce(fn, init);
 
 // Curried string transformers
@@ -35,21 +35,22 @@ export const prop    = key => obj => obj?.[key];
 ```
 
 ```javascript
-import { is } from './lib.js'; // Uses your new library!
+import { isEmail } from './lib.js';
 
-// Pure single-value pipeline
-const sanitizeEmail = pipe(
-  trim,
-  toLower
-);
+// pure single-value pipeline
+const sanitizeEmail = pipe (trim, toLower);
 
-// Array-processing pipeline with point-free style
+// array-processing pipeline with point-free style
 const processEmailList = pipe(
-  map(sanitizeEmail),
-  filter(is.email) // Reusing your dynamic predicate proxy!
+  map (sanitizeEmail),
+  filter (isEmail)
 );
 
-const rawEmails = ["  ALICE@TEST.COM  ", "invalid-email", "   BOB@WEB.DE "];
+const rawEmails = [
+  "  ALICE@TEST.COM  ",
+  "invalid-email",
+  "   BOB@WEB.DE "
+];
 
 processEmailList(rawEmails); 
 // Output: ["alice@test.com", "bob@web.de"]
