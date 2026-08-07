@@ -81,9 +81,9 @@ export const prop    = key => obj => obj?.[key];
 // ============================================================================
 
 // Type and Instance Check Factories
-const typeOf = type => v => typeof v === type;
-const instanceOf = ctor => v => typeof ctor !== 'undefined' && ctor !== null && v instanceof ctor;
-const matches = re => v => typeof v === 'string' && re.test(v);
+const isInstanceOf = ctor => v => typeof ctor !== 'undefined' && ctor !== null && v instanceof ctor;
+const isTypeOf     = type => v => typeof v    === type;
+const matches      = re   => v => typeof v    === 'string' && re.test(v);
 
 // Logic Combinators
 export const not = fn => (...args) => !fn(...args);
@@ -111,17 +111,19 @@ export const match = (rules, fallback = v => v) => (val) => {
 // 2. BASE PREDICATES (Clean names without 'is')
 // ============================================================================
 
-// Primitives & Types
-export const string      = typeOf('string');
-export const bigInt      = typeOf('bigint');
-export const boolean     = typeOf('boolean');
-export const func        = typeOf('function');
-export const symbol      = typeOf('symbol');
-export const undefined_  = typeOf('undefined');
-export const null_       = v => v === null;
-export const nullish     = v => v == null;
-export const defined     = v => v !== undefined;
-export const primitive   = v => v !== Object(v);
+export const // Primitives & Types
+isString      = isTypeOf('string'),
+isBigInt      = isTypeOf('bigint'),
+isBoole       = isTypeOf('boolean'),
+isBoolean     = isTypeOf('boolean'),
+isFn          = isTypeOf('function'),
+isFunction    = isTypeOf('function'),
+isSymbol      = isTypeOf('symbol'),
+isUndefined_  = isTypeOf('undefined'),
+isNull        = v => v === null,
+isNullish     = v => v == null,
+isDefined     = v => v !== undefined,
+isPrimitive   = v => v !== Object(v);
 
 // Numbers
 export const nan         = Number.isNaN;
@@ -161,7 +163,7 @@ export const asyncIterable  = v => v != null && typeof v[Symbol.asyncIterator] =
 export const node         = instanceOf(typeof Node !== 'undefined' ? Node : null);
 export const domNode      = node;
 export const element      = instanceOf(typeof Element !== 'undefined' ? Element : null);
-export const fragment     = instanceOf(typeof DocumentFragment !== 'undefined' ? DocumentFragment : null);
+export const fragment     = instanceOf(typeof DocumentFragment !== 'undefined' ? DoumentFragment : null);
 export const canvas       = instanceOf(typeof HTMLCanvasElement !== 'undefined' ? HTMLCanvasElement : null);
 export const elementish   = or(element, fragment, instanceOf(typeof Document !== 'undefined' ? Document : null));
 export const realNodeList = instanceOf(typeof NodeList !== 'undefined' ? NodeList : null);
