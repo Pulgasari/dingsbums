@@ -31,24 +31,27 @@ const toWords = (value) => String(value)
   .split(' ')
   .filter(Boolean);
 
-// curried array transformers
-export const map    = fn         => arr => arr.map(fn);
-export const filter = predicate  => arr => arr.filter(predicate);
-export const reduce = (fn, init) => arr => arr.reduce(fn, init);
+
+export const // curried array transformers
+map    = fn         => arr => arr.map(fn),
+filter = predicate  => arr => arr.filter(predicate),
+reduce = (fn, init) => arr => arr.reduce(fn, init);
 
 
 export const // curried string transformers
 join           = char => arr => arr.join(char),
 split          = char => str => str.split(char),
-trim           = str  => str.trim(),
-toLowerCase    = str  => value.toLowerCase (),
-toUpperCase    = str  => value.toUpperCase (),
-toCamelCase    = str  => toWords(value).map((word, index) => index ? upperFirst(word) : word).join(''),    
-toConstantCase = str  => toWords(value).join('_').toUpperCase(),
-toKebabCase    = str  => toWords(value).join('-'),
-toPascalCase   = str  => toWords(value).map(upperFirst).join(''),
-toSnakeCase    = str  => toWords(value).join('_'),
-toTitleCase    = str  => toWords(value).map(upperFirst).join(' ');
+toLowerCase    = str  => str.toLowerCase (),
+toUpperCase    = str  => str.toUpperCase (),
+toCamelCase    = str  => toWords(str).map((word, index) => index ? upperFirst(word) : word).join(''),    
+toConstantCase = str  => toWords(str).join('_').toUpperCase(),
+toKebabCase    = str  => toWords(str).join('-'),
+toPascalCase   = str  => toWords(str).map(upperFirst).join(''),
+toSnakeCase    = str  => toWords(str).join('_'),
+toTitleCase    = str  => toWords(str).map(upperFirst).join(' '),
+trim           = str  => str.trim      (),
+trimEnd        = str  => str.trimEnd   (),
+trimStart      = str  => str.trimStart (),
 
 // Curried object getters
 export const prop    = key => obj => obj?.[key];
@@ -88,8 +91,6 @@ processEmailList(rawEmails);
 export const
 capitalize     = value => String(value).charAt(0).toUpperCase() + String(value).slice(1),
 
-trim           = value => value.trim      (),
-trimEnd        = value => value.trimEnd   (),
-trimStart      = value => value.trimStart (),
+
 unquote        = value => String(value).replace(/^(['"`])([\s\S]*)\1$/, '$2');
 ```
