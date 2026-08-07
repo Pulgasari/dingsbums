@@ -60,6 +60,8 @@ processEmailList(rawEmails);
 ```
 
 ```javascript
+// :::::: INTERNAL HELPERS
+
 const upperFirst = (word) => word.charAt(0).toUpperCase() + word.slice(1);
 const toWords = (value) => String(value)
   .replace(/([a-z\d])([A-Z])/g, '$1 $2')
