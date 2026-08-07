@@ -51,7 +51,7 @@ toSnakeCase    = str  => toWords(str).join('_'),
 toTitleCase    = str  => toWords(str).map(upperFirst).join(' '),
 trim           = str  => str.trim      (),
 trimEnd        = str  => str.trimEnd   (),
-trimStart      = str  => str.trimStart (),
+trimStart      = str  => str.trimStart ();
 
 // Curried object getters
 export const prop    = key => obj => obj?.[key];
