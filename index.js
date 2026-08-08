@@ -1,39 +1,7 @@
-// =====================================================================
-// 1. CORE FP UTILITIES (pipe, compose, curry)
-// =====================================================================
+// index.js
 
-// Executes functions left-to-right: pipe(f, g, h)(x) => h(g(f(x)))
-export const pipe = (...fns) => (initialValue) =>
-  fns.reduce((acc, fn) => fn(acc), initialValue);
-
-// Executes functions right-to-left: compose(f, g, h)(x) => f(g(h(x)))
-export const compose = (...fns) => (initialValue) =>
-  fns.reduceRight((acc, fn) => fn(acc), initialValue);
-
-// Auto-curry wrapper supporting multi-step argument passing
-export const curry = (fn) => {
-  const arity = fn.length;
-  return function curried(...args) {
-    if (args.length >= arity) {
-      return fn(...args);
-    }
-    return (...nextArgs) => curried(...args, ...nextArgs);
-  };
-};
-
-// =====================================================================
-// 2. UNARY TRANSFORMS & HELPERS
-// =====================================================================
-
-const upperFirst = (word) => word.charAt(0).toUpperCase() + word.slice(1);
-const toWords = (value) => String(value)
-  .replace(/([a-z\d])([A-Z])/g, '$1 $2')
-  .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
-  .replace(/[\s\-_.]+/g, ' ')
-  .trim()
-  .toLowerCase()
-  .split(' ')
-  .filter(Boolean);
+export * from './core.js';
+export * from './transform.js';
 
 // Array transformers (curried)
 export const map    = curry((fn, arr) => arr.map(fn));
