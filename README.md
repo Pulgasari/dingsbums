@@ -1,3 +1,48 @@
+# dingsbums
+
+```javascript
+// =====================================================================
+// USAGE DEMO
+// =====================================================================
+
+import { match, isBlank, isNumber, isEven, and, is, pipe, trim, toUpperCase, map, filter, isEmail, curry } from './fp-lib.js';
+
+// 1. PATTERN MATCHING WITH OBJECT SYNTAX & FUNCTION KEYS
+const classify = match({
+  isBlank:                 'leer',
+  [and(isNumber, isEven)]: value => value * 100,
+  String:                  value => value.trim().toUpperCase(),
+  Array:                   value => `array mit ${value.length}`
+}, () => 'unbekannt');
+
+console.log(classify(null));       // 'leer'
+console.log(classify(4));          // 400
+console.log(classify('  hi '));    // 'HI'
+console.log(classify([1, 2, 3]));  // 'array mit 3'
+console.log(classify(true));       // 'unbekannt'
+
+// 2. USING THE `is` PROXY (Supports both 'is'-prefixed and non-'is' forms)
+console.log(is.string('test'));         // true
+console.log(is.blank(''));              // true  (auto-aliased from isBlank)
+console.log(is.even(4));                // true  (auto-aliased from isEven)
+console.log(is('number')(42));          // true
+console.log(is([isNumber, isEven])(8)); // true
+
+// 3. PIPELINES WITH CURRIED UTILITIES
+const sanitizeEmail = pipe(trim, toUpperCase);
+const processEmailList = pipe(
+  map(sanitizeEmail),
+  filter(isEmail)
+);
+
+console.log(processEmailList([
+  "  alice@test.com  ",
+  "invalid-email",
+  "   bob@web.de "
+])); 
+// Output: ["ALICE@TEST.COM", "BOB@WEB.DE"]
+```
+
 # fp
 
 ```md
