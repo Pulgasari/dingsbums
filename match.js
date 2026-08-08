@@ -20,51 +20,8 @@ for (const [name, fn] of Object.entries(preds)) {
   if (typeof fn === 'function') createPredicate(fn, name);
 }
 
+// :::::: Dynamischer Konstruktor-Resolver & Rest wie gehabt...
 
-
-// ----
-
-// Logic Combinators
-export const not = fn => (...args) => !fn(...args);
-export const and = (...fns) => v => fns.every(fn => (typeof fn === 'function' ? fn(v) : fn));
-export const or  = (...fns) => v => fns.some(fn => (typeof fn === 'function' ? fn(v) : fn));
-
-// Pattern Matcher (R.cond / switch-case replacement)
-const testRule = (rule, val) => {
-  if (typeof rule === 'function') return rule(val);
-  if (typeof rule === 'boolean') return rule;
-  if (Array.isArray(rule)) return rule.every(r => testRule(r, val));
-  return false;
-};
-
-// -----
-
-export const and = (...fns) => {
-  const pred = (v) => fns.every((fn) => (typeof fn === 'function' ? fn(v) : fn));
-  return createPredicate(pred, `and(${fns.map((f) => f.name || f).join(',')})`);
-};
-
-export const not = (fn) => {
-  const pred = (v) => !(typeof fn === 'function' ? fn(v) : fn);
-  return createPredicate(pred, `not(${fn.name || fn})`);
-};
-
-export const or = (...fns) => {
-  const pred = (v) => fns.some((fn) => (typeof fn === 'function' ? fn(v) : fn));
-  return createPredicate(pred, `or(${fns.map((f) => f.name || f).join(',')})`);
-};
-
- 
-
-// -----
-
-// =====================================================================
-// REGISTRY & AUTO-REGISTRATION FROM MODULE
-// =====================================================================
-
-
-
-// Dynamischer Konstruktor-Resolver & Rest wie gehabt...
 export const resolveRule = (key) => {
   if (typeof key === 'function') return key;
 
