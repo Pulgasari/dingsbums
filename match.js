@@ -25,9 +25,31 @@ export const createPredicate = (fn, name) => {
   return fn;
 };
 
-// =====================================================================
-// 4. COMBINATORS & PATTERN MATCHING
-// =====================================================================
+// ----
+
+// Logic Combinators
+export const not = fn => (...args) => !fn(...args);
+export const and = (...fns) => v => fns.every(fn => (typeof fn === 'function' ? fn(v) : fn));
+export const or  = (...fns) => v => fns.some(fn => (typeof fn === 'function' ? fn(v) : fn));
+
+// Pattern Matcher (R.cond / switch-case replacement)
+const testRule = (rule, val) => {
+  if (typeof rule === 'function') return rule(val);
+  if (typeof rule === 'boolean') return rule;
+  if (Array.isArray(rule)) return rule.every(r => testRule(r, val));
+  return false;
+};
+
+export const match = (rules, fallback = v => v) => (val) => {
+  for (const [predicate, handler] of rules) {
+    if (testRule(predicate, val)) {
+      return typeof handler === 'function' ? handler(val) : handler;
+    }
+  }
+  return typeof fallback === 'function' ? fallback(val) : fallback;
+};
+
+// -----
 
 export const and = (...fns) => {
   const pred = (v) => fns.every((fn) => (typeof fn === 'function' ? fn(v) : fn));
