@@ -63,8 +63,8 @@ export const match = (rulesObject, fallback = (v) => v) => {
 
 const createChecker = (rule) => (val) => resolveRule(rule)(val);
 
-export const is = new Proxy(createChecker, {
-  get(target, prop) {
+export const is = new Proxy (createChecker, {
+  get (target, prop) {
     if (typeof prop === 'string') 
     return (val) => resolveRule(prop)(val);
     return target[prop];
