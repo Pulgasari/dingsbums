@@ -228,9 +228,9 @@ const predicates = {
 
 // Evaluator for single/multiple rules () and []
 const evalRule = (rule, val) => {
-  if (typeof rule === 'string') return predicates[rule]?.(val) ?? false;
+  if (typeof rule === 'string')   return predicates[rule]?.(val) ?? false;
   if (typeof rule === 'function') return rule(val);
-  if (Array.isArray(rule)) return rule.every(r => evalRule(r, val));
+  if (Array.isArray(rule))        return rule.every(r => evalRule(r, val));
   return false;
 };
 
