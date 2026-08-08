@@ -1,6 +1,6 @@
 // predicates.js
 
-import { and, not, or } from './match.js';
+import { and, not, or, testRule } from './core.js';
 
 // :::::: HELPERS
 
@@ -117,21 +117,3 @@ isStringList  = v => isArray(v) && v.every(isString);
 
 
 
-// Evaluator for single/multiple rules () and []
-const evalRule = (rule, val) => {
-  if (typeof rule === 'string')   return predicates[rule]?.(val) ?? false;
-  if (typeof rule === 'function') return rule(val);
-  if (Array.isArray(rule))        return rule.every(r => evalRule(r, val));
-  return false;
-};
-
-// Curried syntax creator: is('string')(val) or is([number, even])(val)
-const createChecker = rule => val => evalRule(rule, val);
-
-// The `is` Proxy: supports is.string(v), is('string')(v), is([p1, p2])(v)
-export const is = new Proxy(createChecker, {
-  get(target, prop) {
-    if (prop in predicates) return predicates[prop];
-    return target[prop];
-  }
-});
