@@ -383,10 +383,10 @@ usage
 import { match, isBlank, isNumber, isEven, and } from './is.js';
 
 const classify = match({
-  isBlank:                 'leer',
-  [and(isNumber, isEven)]: value => value * 100,
-  String:                  value => value.trim().toUpperCase(),
-  Array:                   value => `array mit ${value.length}`
+  isBlank                 : 'leer',
+  [and(isNumber, isEven)] : value => value * 100,
+  String                  : value => value.trim().toUpperCase(),
+  Array                   : value => `array mit ${value.length}`
 }, () => 'unbekannt');
 
 classify(null);       // 'leer'
