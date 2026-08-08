@@ -174,35 +174,35 @@ export const nodeList     = v => (realNodeList(v) || array(v)) && [...v].every(n
 export const internalUrl  = v => string(v) && typeof window !== 'undefined' && v.startsWith(window.location.origin);
 export const externalUrl  = v => string(v) && typeof window !== 'undefined' && !v.startsWith(window.location.origin);
 
-// Emptiness & Logic
-export const blank        = v => v === null || v === undefined || v === '';
-export const emptyString   = v => !v || v.length === 0;
-export const emptyArray    = and(array, v => v.length === 0);
-export const emptyMap      = and(map, v => v.size === 0);
-export const emptySet      = and(set, v => v.size === 0);
-export const emptyObject   = and(plainObject, v => Object.keys(v).length === 0);
-export const empty         = or(v => v === '', v => v?.length === 0, emptyMap, emptySet, emptyObject);
-export const falsy         = v => !v && v !== 0 && v !== false;
-export const filled        = and(not(blank), not(empty), not(emptyObject));
+export const // Emptiness & Logic
+isBlank       = v => v === null || v === undefined || v === '',
+isEmptyString = v => !v || v.length === 0,
+isEmptyArray  = and(array, v => v.length === 0),
+isEmptyMap    = and(map, v => v.size === 0),
+isEmptySet    = and(set, v => v.size === 0),
+isEmptyObject = and(plainObject, v => Object.keys(v).length === 0),
+isEmpty       = or(v => v === '', v => v?.length === 0, emptyMap, emptySet, emptyObject),
+isFalsy       = v => !v && v !== 0 && v !== false,
+isFilled      = and(not(blank), not(empty), not(emptyObject));
 
-// Formats & Parsing
-export const alphaNumeric = matches(/^[a-z0-9]+$/i);
-export const base64       = matches(/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/);
-export const email        = matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
-export const hexColor     = matches(/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i);
-export const uuid         = matches(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
-export const json         = v => { if (!string(v)) return false; try { JSON.parse(v); return true; } catch { return false; } };
-export const url          = v => { try { new URL(v); return true; } catch { return false; } };
-export const html         = v => string(v) && /^<([a-z]+)(\s[^>]*)?>.*<\/\1>$|^<([a-z]+)(\s[^>]*)?\/?>$/i.test(v.trim());
+export const // Formats & Parsing
+isAlphaNumeric = matches(/^[a-z0-9]+$/i),
+isBase64       = matches(/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/),
+isEmail        = matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/),
+isHexColor     = matches(/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i),
+isUUID         = matches(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i),
+isJSON         = v => { if (!string(v)) return false; try { JSON.parse(v); return true; } catch { return false; } },
+isURL          = v => { try { new URL(v); return true; } catch { return false; } },
+isHTML         = v => string(v) && /^<([a-z]+)(\s[^>]*)?>.*<\/\1>$|^<([a-z]+)(\s[^>]*)?\/?>$/i.test(v.trim());
 
-// String Cases
-export const lowerCase    = and(string, v => v === v.toLowerCase());
-export const upperCase    = and(string, v => v === v.toUpperCase());
-export const camelCase    = and(matches(/^[a-z][a-zA-Z0-9]*$/), not(upperCase));
-export const constantCase = matches(/^[A-Z0-9]+(?:_[A-Z0-9]+)*$/);
-export const kebabCase    = matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
-export const pascalCase   = matches(/^[A-Z][a-zA-Z0-9]*$/);
-export const snakeCase    = matches(/^[a-z0-9]+(?:_[a-z0-9]+)*$/);
+export const // String Cases
+isLowerCase    = and(string, v => v === v.toLowerCase()),
+isUpperCase    = and(string, v => v === v.toUpperCase()),
+isCamelCase    = and(matches(/^[a-z][a-zA-Z0-9]*$/), not(upperCase)),
+isConstantCase = matches(/^[A-Z0-9]+(?:_[A-Z0-9]+)*$/),
+isKebabCase    = matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+isPascalCase   = matches(/^[A-Z][a-zA-Z0-9]*$/),
+isSnakeCase    = matches(/^[a-z0-9]+(?:_[a-z0-9]+)*$/);
 
 // Lists
 export const entriesList  = v => array(v) && v.every(item => array(item) && item.length === 2);
