@@ -1,5 +1,32 @@
 # fp
 
+```md
+
+Ziel
+
+1. einzelne "is`-Funktionen
+
+2. is-proxy
+
+3. match, die nice objekt-shaped body haben kann
+
+const classify = match({
+  isBlank:                 'leer',
+  [and(isNumber, isEven)]: value => value * 100,
+  String:                  value => value.trim().toUpperCase(),
+  Array:                   value => `array mit ${value.length}`
+}, () => 'unbekannt');
+
+classify(null);       // 'leer'
+classify(4);          // 400
+classify('  hi ');    // 'HI'
+classify([1, 2, 3]);  // 'array mit 3'
+classify(true);       // 'unbekannt'
+
+4. auch direkt möglichkeit via "String", "Array" usw checken zu können
+
+```
+
 ```javascript
 // =====================================================================
 // 1. PIPE & COMPOSE CORE
@@ -139,9 +166,9 @@ isPositive    = and(isNumber, v => v > 0),
 isNegative    = and(isNumber, v => v < 0),
 isZero        = v => v === 0;
 
-export const numericString = v => string(v) && v.trim() !== '' && !nan(Number(v));
-export const numeric       = or(number, numericString);
-export const year          = v => (number(v) || numericString(v)) && /^\d{4}$/.test(String(v)) && +v >= 0 && +v <= 9999;
+isNumericString = v => isString(v) && v.trim() !== '' && !nan(Number(v)),
+isNumeric       = or(isNumber, isNumericString),
+isYear          = v => (isNumber(v) || isNumericString(v)) && /^\d{4}$/.test(String(v)) && +v >= 0 && +v <= 9999;
 
 // Objects & Data Structures
 export const array        = Array.isArray;
@@ -153,9 +180,9 @@ export const map          = instanceOf(typeof Map !== 'undefined' ? Map : null);
 export const set          = instanceOf(typeof Set !== 'undefined' ? Set : null);
 export const date         = v => instanceOf(Date)(v) && !nan(v.getTime());
 export const date2        = v => /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/.test(v) || (!nan(Date.parse(v)) && nan(Number(v)));
-export const regExp       = instanceOf(RegExp);
-export const promise      = instanceOf(Promise);
-export const error        = instanceOf(Error);
+export const regExp       = isInstanceOf(RegExp);
+export const promise      = isInstanceOf(Promise);
+export const error        = isInstanceOf(Error);
 export const buffer       = v => typeof Buffer !== 'undefined' && Buffer.isBuffer(v);
 
 export const iterable       = v => v != null && typeof v[Symbol.iterator] === 'function';
@@ -193,7 +220,7 @@ isHexColor     = matches(/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i),
 isUUID         = matches(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i),
 isJSON         = v => { if (!string(v)) return false; try { JSON.parse(v); return true; } catch { return false; } },
 isURL          = v => { try { new URL(v); return true; } catch { return false; } },
-isHTML         = v => string(v) && /^<([a-z]+)(\s[^>]*)?>.*<\/\1>$|^<([a-z]+)(\s[^>]*)?\/?>$/i.test(v.trim());
+isHTML         = v => isString(v) && /^<([a-z]+)(\s[^>]*)?>.*<\/\1>$|^<([a-z]+)(\s[^>]*)?\/?>$/i.test(v.trim());
 
 export const // String Cases
 isLowerCase    = and(string, v => v === v.toLowerCase()),
@@ -204,10 +231,10 @@ isKebabCase    = matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
 isPascalCase   = matches(/^[A-Z][a-zA-Z0-9]*$/),
 isSnakeCase    = matches(/^[a-z0-9]+(?:_[a-z0-9]+)*$/);
 
-// Lists
-export const entriesList  = v => array(v) && v.every(item => array(item) && item.length === 2);
-export const objectList   = v => array(v) && v.every(object);
-export const stringList   = v => array(v) && v.every(string);
+export const // Lists
+isEntriesList = v => isArray(v) && v.every(item => isArray(item) && item.length === 2);
+isObjectList  = v => isArray(v) && v.every(object);
+isStringList  = v => isArray(v) && v.every(string);
 
 // =====================================================================
 // 3. PREDICATE REGISTRY & DYNAMIC IS PROXY
