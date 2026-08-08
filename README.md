@@ -464,3 +464,45 @@ slugify(" Functional Programming JS! ");
 
 ```
 
+# additionals
+
+```javascript
+// =====================================================================
+// AUTOMATED PREDICATE CREATOR & REGISTRY
+// =====================================================================
+
+const registry = new Map();
+let predIdCounter = 0;
+
+export const createPredicate = (fn, name) => {
+  const id = name || `__pred_${++predIdCounter}__`;
+  fn.toString = () => id;
+
+  // 1. Register full name (e.g. 'isString', 'isBlank')
+  registry.set(id, fn);
+
+  // 2. Auto-derive and register aliases for 'is'-prefixed names
+  if (id.startsWith('is') && id.length > 2) {
+    const rawName = id.slice(2); // 'String', 'Array', 'Blank'
+    const lowerName = rawName.charAt(0).toLowerCase() + rawName.slice(1); // 'string', 'array', 'blank'
+
+    if (!registry.has(rawName)) registry.set(rawName, fn);     // Enables: 'String', 'Array', 'Object'
+    if (!registry.has(lowerName)) registry.set(lowerName, fn); // Enables: 'string', 'array', 'blank'
+  }
+
+  return fn;
+};
+
+// =====================================================================
+// BASE PREDICATES (All auto-register their 'String', 'string', etc. keys)
+// =====================================================================
+
+export const isString   = createPredicate(v => typeof v === 'string', 'isString');
+export const isArray    = createPredicate(Array.isArray, 'isArray');
+export const isNumber   = createPredicate(v => typeof v === 'number' && !Number.isNaN(v), 'isNumber');
+export const isBoolean  = createPredicate(v => typeof v === 'boolean', 'isBoolean');
+export const isObject   = createPredicate(v => Boolean(v) && typeof v === 'object' && !Array.isArray(v), 'isObject');
+export const isFunction = createPredicate(v => typeof v === 'function', 'isFunction');
+export const isBlank    = createPredicate(v => v == null || v === '', 'isBlank');
+```
+
