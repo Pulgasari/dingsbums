@@ -30,6 +30,8 @@ export const curry = (fn) => {
   };
 };
 
+export const curry = (fn) => curried(...args) => (args.length >= fn.length) ?  fn(...args) : (...nextArgs) => curried(...args, ...nextArgs);
+  
 // =====================================================================
 // 2. CURRIED FP UTILITIES (Reusable Pipeline Building Blocks)
 // =====================================================================
