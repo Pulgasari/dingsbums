@@ -40,15 +40,6 @@ const testRule = (rule, val) => {
   return false;
 };
 
-export const match = (rules, fallback = v => v) => (val) => {
-  for (const [predicate, handler] of rules) {
-    if (testRule(predicate, val)) {
-      return typeof handler === 'function' ? handler(val) : handler;
-    }
-  }
-  return typeof fallback === 'function' ? fallback(val) : fallback;
-};
-
 // -----
 
 export const and = (...fns) => {
@@ -66,21 +57,7 @@ export const or = (...fns) => {
   return createPredicate(pred, `or(${fns.map((f) => f.name || f).join(',')})`);
 };
 
-// Pattern Matcher supporting object syntax, predicate keys, string key lookup, and constructor names
-export const match = (rulesObject, fallback = (v) => v) => {
-  const compiledRules = Object.entries(rulesObject).map(([key, handler]) => {
-    const testFn = registry.get(key) ?? ((v) => String(v) === key);
-    return [testFn, handler];
-  });
-
-  return (value) => {
-    for (let index = 0; index < compiledRules.length; index++) {
-      const [testFn, handler] = compiledRules[index];
-      if (testFn(value)) return typeof handler === 'function' ? handler(value) : handler;
-    }
-    return typeof fallback === 'function' ? fallback(value) : fallback;
-  };
-};
+ 
 
 // -----
 
@@ -125,4 +102,33 @@ export const resolveRule = (key) => {
 
   return () => false;
 };
+
+// :::::: PATTERN MATCHER
+// supports: object syntax, predicate keys, string key lookup, and constructor names
+
+export const match = (rulesObject, fallback = (v) => v) => {
+  const compiledRules = Object.entries(rulesObject).map(
+    ([key, handler]) => [ resolveRule(key), handler ]
+  );
+
+  return (value) => {
+    for (let index = 0; index < compiledRules.length; index++) {
+      const [testFn, handler] = compiledRules[index];
+      if (testFn(value)) return typeof handler === 'function' ? handler(value) : handler;
+    }
+    return typeof fallback === 'function' ? fallback(value) : fallback;
+  };
+};
+
+// :::::: IS-PROXY
+
+const createChecker = (rule) => (val) => resolveRule(rule)(val);
+
+export const is = new Proxy(createChecker, {
+  get(target, prop) {
+    if (typeof prop === 'string') 
+    return (val) => resolveRule(prop)(val);
+    return target[prop];
+  }
+});
 
