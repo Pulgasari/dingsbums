@@ -81,3 +81,52 @@ export const match = (rulesObject, fallback = (v) => v) => {
     return typeof fallback === 'function' ? fallback(value) : fallback;
   };
 };
+
+// -----
+
+// =====================================================================
+// REGISTRY & AUTO-REGISTRATION FROM MODULE
+// =====================================================================
+
+import * as predicatesModule from './predicates.js';
+
+const registry = new Map();
+let predIdCounter = 0;
+
+export const createPredicate = (fn, name) => {
+  const id = name || fn.name || `__pred_${++predIdCounter}__`;
+  fn.toString = () => id;
+  registry.set(id, fn);
+  return fn;
+};
+
+// Auto-register all imported predicates from the extra file
+for (const [exportName, fn] of Object.entries(predicatesModule)) {
+  if (typeof fn === 'function') {
+    // Falls sie noch nicht registriert sind, nimm den Export-Namen (z.B. 'isBlank', 'isNumber')
+    createPredicate(fn, exportName);
+  }
+}
+
+// Dynamischer Konstruktor-Resolver & Rest wie gehabt...
+export const resolveRule = (key) => {
+  if (typeof key === 'function') return key;
+
+  if (typeof key === 'string') {
+    if (registry.has(key)) return registry.get(key);
+
+    const withIs = 'is' + key.charAt(0).toUpperCase() + key.slice(1);
+    if (registry.has(withIs)) return registry.get(withIs);
+
+    const TargetCtor = typeof globalThis !== 'undefined' ? globalThis[key] : null;
+    if (typeof TargetCtor === 'function') {
+      return (v) => v != null && (v.constructor === TargetCtor || v instanceof TargetCtor);
+    }
+
+    return (v) => String(v) === key;
+  }
+
+  return () => false;
+};
+
+
