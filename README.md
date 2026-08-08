@@ -580,7 +580,7 @@ export const is = new Proxy(createChecker, {
 });
 ```
 
-```
+```javascript
 // =====================================================================
 // REGISTRY & AUTO-REGISTRATION FROM MODULE
 // =====================================================================
