@@ -1,14 +1,10 @@
 // core.js
 
-// executes functions left-to-right
-// pipe (f,g,h)(x) => h(g(f(x)))
-export const pipe = (...fns) => (initialValue) =>
-  fns.reduce((acc, fn) => fn(acc), initialValue);
-
-// executes functions right-to-left
-// compose (f,g,h)(x) => f(g(h(x)))
-export const compose = (...fns) => (initialValue) =>
-  fns.reduceRight((acc, fn) => fn(acc), initialValue);
+export const
+// compose (f,g,h)(x) => f(g(h(x))) ... executes functions right-to-left
+// pipe    (f,g,h)(x) => h(g(f(x))) ... executes functions left-to-right
+compose = (...fns) => (value) => fns.reduceRight ((acc, fn) => fn(acc), value),   
+pipe    = (...fns) => (value) => fns.reduce      ((acc, fn) => fn(acc), value);
 
 // =====================================================================
 // AUTO-CURRY IMPLEMENTATION
@@ -25,10 +21,8 @@ export const curry = (fn) => {
   };
 };
 
-// ::::::
+// :::::: Logic Combinators
 
-
-// Logic Combinators
 export const not = fn => (...args) => !fn(...args);
 export const and = (...fns) => v => fns.every(fn => (typeof fn === 'function' ? fn(v) : fn));
 export const or  = (...fns) => v => fns.some(fn => (typeof fn === 'function' ? fn(v) : fn));
