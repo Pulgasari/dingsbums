@@ -506,3 +506,76 @@ export const isFunction = createPredicate(v => typeof v === 'function', 'isFunct
 export const isBlank    = createPredicate(v => v == null || v === '', 'isBlank');
 ```
 
+```javascript
+// =====================================================================
+// DYNAMIC PREDICATE & CONSTRUCTOR RESOLVER
+// =====================================================================
+
+const registry = new Map();
+let predIdCounter = 0;
+
+export const createPredicate = (fn, name) => {
+  const id = name || `__pred_${++predIdCounter}__`;
+  fn.toString = () => id;
+  registry.set(id, fn);
+  return fn;
+};
+
+// Resolves a key to a predicate test function
+export const resolveRule = (key) => {
+  // 1. Direct function / predicate reference
+  if (typeof key === 'function') return key;
+
+  if (typeof key === 'string') {
+    // 2. Registered predicate (e.g. 'isBlank')
+    if (registry.has(key)) return registry.get(key);
+
+    // 3. Registered predicate with 'is' prefix (e.g. 'string' -> 'isString')
+    const withIs = 'is' + key.charAt(0).toUpperCase() + key.slice(1);
+    if (registry.has(withIs)) return registry.get(withIs);
+
+    // 4. Automatic Constructor Detection (String, Array, Date, Map, RegExp, Error, etc.)
+    const TargetCtor = typeof globalThis !== 'undefined' ? globalThis[key] : null;
+    if (typeof TargetCtor === 'function') {
+      return (v) => v != null && (v.constructor === TargetCtor || v instanceof TargetCtor);
+    }
+
+    // 5. Fallback: string matching
+    return (v) => String(v) === key;
+  }
+
+  return () => false;
+};
+
+// =====================================================================
+// PATTERN MATCHER & IS PROXY
+// =====================================================================
+
+export const match = (rulesObject, fallback = (v) => v) => {
+  const compiledRules = Object.entries(rulesObject).map(([key, handler]) => [
+    resolveRule(key),
+    handler
+  ]);
+
+  return (value) => {
+    for (let index = 0; index < compiledRules.length; index++) {
+      const [testFn, handler] = compiledRules[index];
+      if (testFn(value)) {
+        return typeof handler === 'function' ? handler(value) : handler;
+      }
+    }
+    return typeof fallback === 'function' ? fallback(value) : fallback;
+  };
+};
+
+const createChecker = (rule) => (val) => resolveRule(rule)(val);
+
+export const is = new Proxy(createChecker, {
+  get(target, prop) {
+    if (typeof prop === 'string') {
+      return (val) => resolveRule(prop)(val);
+    }
+    return target[prop];
+  }
+});
+```
