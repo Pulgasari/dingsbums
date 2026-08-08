@@ -246,6 +246,65 @@ export const is = new Proxy(createChecker, {
 });
 ```
 
+```javascript
+// @aufbau/js/is.js
+
+const registry = new Map();
+let idCounter = 0;
+
+// Wraps a predicate function and registers a unique key for object property access
+export const createPredicate = (fn, name) => {
+  const id = name || `__pred_${++idCounter}__`;
+  fn.toString = () => id;
+  registry.set(id, fn);
+  return fn;
+};
+
+// :::::: BASE PREDICATES
+
+export const isBlank  = createPredicate((v) => v == null || v === '', 'isBlank');
+export const isNumber = createPredicate((v) => typeof v === 'number' && !Number.isNaN(v), 'isNumber');
+export const isEven   = createPredicate((v) => Number.isInteger(v) && v % 2 === 0, 'isEven');
+export const isString = createPredicate((v) => typeof v === 'string', 'isString');
+export const isArray  = createPredicate(Array.isArray, 'isArray');
+
+// Alias mapping for standard constructor names like String, Array, etc.
+registry.set('String', isString);
+registry.set('Array', isArray);
+registry.set('blank', isBlank);
+
+// :::::: COMBINATORS
+
+// Returns a new registered predicate function for AND logic
+export const and = (...preds) => {
+  return createPredicate((value) => preds.every((p) => p(value)));
+};
+
+// Returns a new registered predicate function for OR logic
+export const or = (...preds) => {
+  return createPredicate((value) => preds.some((p) => p(value)));
+};
+
+// :::::: PATTERN MATCHING
+
+export const match = (rulesObject, fallback = (v) => v) => {
+  const compiledRules = Object.entries(rulesObject).map(([key, handler]) => {
+    const testFn = registry.get(key) ?? ((v) => String(v) === key);
+    return [testFn, handler];
+  });
+
+  return (value) => {
+    for (let index = 0; index < compiledRules.length; index++) {
+      const [testFn, handler] = compiledRules[index];
+      if (testFn(value)) {
+        return typeof handler === 'function' ? handler(value) : handler;
+      }
+    }
+    return typeof fallback === 'function' ? fallback(value) : fallback;
+  };
+};
+```
+
 
 ## usage examples
 
