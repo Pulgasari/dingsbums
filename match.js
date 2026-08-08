@@ -90,7 +90,7 @@ export const match = (rulesObject, fallback = (v) => v) => {
 
 import * as predicatesModule from './predicates.js';
 
-const registry = new Map();
+const registry = new Map;
 let predIdCounter = 0;
 
 export const createPredicate = (fn, name) => {
@@ -100,12 +100,9 @@ export const createPredicate = (fn, name) => {
   return fn;
 };
 
-// Auto-register all imported predicates from the extra file
+// auto-register all imported predicates from the extra file
 for (const [exportName, fn] of Object.entries(predicatesModule)) {
-  if (typeof fn === 'function') {
-    // Falls sie noch nicht registriert sind, nimm den Export-Namen (z.B. 'isBlank', 'isNumber')
-    createPredicate(fn, exportName);
-  }
+  if (typeof fn === 'function') createPredicate(fn, exportName);
 }
 
 // Dynamischer Konstruktor-Resolver & Rest wie gehabt...
@@ -128,5 +125,4 @@ export const resolveRule = (key) => {
 
   return () => false;
 };
-
 
