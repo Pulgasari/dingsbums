@@ -1,29 +1,26 @@
 // match.js
 
-// =====================================================================
-// 3. PREDICATE REGISTRY & CREATOR
-// =====================================================================
+// :::::: REGISTRY
 
-const registry = new Map();
+const registry = new Map;
 let predIdCounter = 0;
 
-// Wraps a predicate function, overrides toString() for object key matching,
-// and registers both 'isName' and 'name' (without 'is') in the lookup registry.
 export const createPredicate = (fn, name) => {
-  const id = name || `__pred_${++predIdCounter}__`;
+  const id = name || fn.name || `__pred_${++predIdCounter}__`;
   fn.toString = () => id;
   registry.set(id, fn);
-
-  // Auto-register alias without 'is' prefix (e.g., 'isBlank' -> 'blank')
-  if (id.startsWith('is') && id.length > 2) {
-    const withoutIs = id.slice(2, 3).toLowerCase() + id.slice(3);
-    if (!registry.has(withoutIs)) {
-      registry.set(withoutIs, fn);
-    }
-  }
-
   return fn;
 };
+
+// :::::: PREDICATES AUTO-REGISTER
+
+import * as preds from './predicates.js';
+
+for (const [name, fn] of Object.entries(preds)) {
+  if (typeof fn === 'function') createPredicate(fn, name);
+}
+
+
 
 // ----
 
@@ -65,22 +62,7 @@ export const or = (...fns) => {
 // REGISTRY & AUTO-REGISTRATION FROM MODULE
 // =====================================================================
 
-import * as predicatesModule from './predicates.js';
 
-const registry = new Map;
-let predIdCounter = 0;
-
-export const createPredicate = (fn, name) => {
-  const id = name || fn.name || `__pred_${++predIdCounter}__`;
-  fn.toString = () => id;
-  registry.set(id, fn);
-  return fn;
-};
-
-// auto-register all imported predicates from the extra file
-for (const [exportName, fn] of Object.entries(predicatesModule)) {
-  if (typeof fn === 'function') createPredicate(fn, exportName);
-}
 
 // Dynamischer Konstruktor-Resolver & Rest wie gehabt...
 export const resolveRule = (key) => {
