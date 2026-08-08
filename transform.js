@@ -24,6 +24,9 @@ export const // curried array transformers
 map    = fn         => arr => arr.map(fn),
 filter = predicate  => arr => arr.filter(predicate),
 reduce = (fn, init) => arr => arr.reduce(fn, init);
+// map    = curry((fn, arr) => arr.map(fn));
+// filter = curry((predicate, arr) => arr.filter(predicate));
+// reduce = curry((fn, init, arr) => arr.reduce(fn, init));
 
 export const // curried string transformers
 capitalize     = str  => String(str).charAt(0).toUpperCase() + String(str).slice(1),
@@ -41,6 +44,14 @@ trim           = str  => str.trim      (),
 trimEnd        = str  => str.trimEnd   (),
 trimStart      = str  => str.trimStart (),
 unquote        = str  => String(str).replace(/^(['"`])([\s\S]*)\1$/, '$2');
+//join           = curry((char, arr) => arr.join(char)),
+//split          = curry((char, str) => str.split(char)),
 
-// Curried object getters
+// Object & general helpers (curried)
 export const prop    = key => obj => obj?.[key];
+//export const prop    = curry((key, obj) => obj?.[key]);
+//export const replace = curry((searchValue, replaceValue, str) => String(str).replace(searchValue, replaceValue));
+//export const slice   = curry((start, end, list) => list.slice(start, end));
+
+
+
