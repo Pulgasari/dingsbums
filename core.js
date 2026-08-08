@@ -24,8 +24,8 @@ export const curry = (fn) => {
 // :::::: Logic Combinators
 
 export const not = fn => (...args) => !fn(...args);
-export const and = (...fns) => v => fns.every(fn => (typeof fn === 'function' ? fn(v) : fn));
-export const or  = (...fns) => v => fns.some(fn => (typeof fn === 'function' ? fn(v) : fn));
+export const and = (...fns) => v => fns.every (fn => (typeof fn === 'function' ? fn(v) : fn));        
+export const or  = (...fns) => v => fns.some  (fn => (typeof fn === 'function' ? fn(v) : fn));
 
 // Pattern Matcher (R.cond / switch-case replacement)
 const testRule = (rule, val) => {
