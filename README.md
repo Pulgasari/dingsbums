@@ -246,9 +246,9 @@ export const is = new Proxy(createChecker, {
 });
 ```
 
-```javascript
-// @aufbau/js/is.js
+## function calls as keys
 
+```javascript
 const registry = new Map();
 let idCounter = 0;
 
@@ -303,6 +303,25 @@ export const match = (rulesObject, fallback = (v) => v) => {
     return typeof fallback === 'function' ? fallback(value) : fallback;
   };
 };
+```
+
+usage 
+
+```javascript
+import { match, isBlank, isNumber, isEven, and } from './is.js';
+
+const classify = match({
+  isBlank:                 'leer',
+  [and(isNumber, isEven)]: value => value * 100,
+  String:                  value => value.trim().toUpperCase(),
+  Array:                   value => `array mit ${value.length}`
+}, () => 'unbekannt');
+
+classify(null);       // 'leer'
+classify(4);          // 400
+classify('  hi ');    // 'HI'
+classify([1, 2, 3]);  // 'array mit 3'
+classify(true);       // 'unbekannt'
 ```
 
 
