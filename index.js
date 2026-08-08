@@ -3,32 +3,6 @@
 export * from './core.js';
 export * from './transform.js';
 
-// Array transformers (curried)
-export const map    = curry((fn, arr) => arr.map(fn));
-export const filter = curry((predicate, arr) => arr.filter(predicate));
-export const reduce = curry((fn, init, arr) => arr.reduce(fn, init));
-
-// String transformers
-export const capitalize     = (str) => String(str).charAt(0).toUpperCase() + String(str).slice(1);
-export const join           = curry((char, arr) => arr.join(char));
-export const split          = curry((char, str) => str.split(char));
-export const toLowerCase    = (str) => String(str).toLowerCase();
-export const toUpperCase    = (str) => String(str).toUpperCase();
-export const toCamelCase    = (str) => toWords(str).map((word, index) => index ? upperFirst(word) : word).join('');
-export const toConstantCase = (str) => toWords(str).join('_').toUpperCase();
-export const toKebabCase    = (str) => toWords(str).join('-');
-export const toPascalCase   = (str) => toWords(str).map(upperFirst).join('');
-export const toSnakeCase    = (str) => toWords(str).join('_');
-export const toTitleCase    = (str) => toWords(str).map(upperFirst).join(' ');
-export const trim           = (str) => String(str).trim();
-export const trimEnd        = (str) => String(str).trimEnd();
-export const trimStart      = (str) => String(str).trimStart();
-export const unquote        = (str) => String(str).replace(/^(['"`])([\s\S]*)\1$/, '$2');
-
-// Object & general helpers (curried)
-export const prop           = curry((key, obj) => obj?.[key]);
-export const replace        = curry((searchValue, replaceValue, str) => String(str).replace(searchValue, replaceValue));
-export const slice          = curry((start, end, list) => list.slice(start, end));
 
 // =====================================================================
 // 3. PREDICATE REGISTRY & CREATOR
