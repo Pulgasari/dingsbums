@@ -513,5 +513,16 @@ for (const [kind, name, fn] of deepEntries(API2))
 API[name] = [fn, kind];
 
 API = deepEntries(API2).map( ([kind, name, fn]) => { [name]: [fn, kind] };   
+// Add an entries getter to Object.prototype
+Object.defineProperty(Object.prototype, 'entries', {
+  get() { return Object.entries(this); },
+  configurable: true,
+  enumerable: false,
+});
+
+// Now this syntax works as intended
+for (const [kind, fns] of API2.entries)
+for (const [name, fn]  of fns.entries)
+API[name] = [fn, kind];
 
 ```
