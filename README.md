@@ -1,10 +1,10 @@
 # dingsbums
 
-```javascript
-// =====================================================================
-// USAGE DEMO
-// =====================================================================
+## examples
 
+### pattern matching with object syntax and function keys
+
+```javascript
 import { match, isBlank, isNumber, isEven, and, is, pipe, trim, toUpperCase, map, filter, isEmail, curry } from './fp-lib.js';
 
 // 1. PATTERN MATCHING WITH OBJECT SYNTAX & FUNCTION KEYS
@@ -20,7 +20,9 @@ console.log(classify(4));          // 400
 console.log(classify('  hi '));    // 'HI'
 console.log(classify([1, 2, 3]));  // 'array mit 3'
 console.log(classify(true));       // 'unbekannt'
+```
 
+```javascript
 // 2. USING THE `is` PROXY (Supports both 'is'-prefixed and non-'is' forms)
 console.log(is.string('test'));         // true
 console.log(is.blank(''));              // true  (auto-aliased from isBlank)
@@ -73,76 +75,12 @@ classify(true);       // 'unbekannt'
 ```
 
 ```javascript
-// =====================================================================
-// 1. PIPE & COMPOSE CORE
-// =====================================================================
-
-// executes functions left-to-right
-// pipe (f,g,h)(x) => h(g(f(x)))
-export const pipe = (...fns) => (initialValue) =>
-  fns.reduce((acc, fn) => fn(acc), initialValue);
-
-// executes functions right-to-left
-// compose (f,g,h)(x) => f(g(h(x)))
-export const compose = (...fns) => (initialValue) =>
-  fns.reduceRight((acc, fn) => fn(acc), initialValue);
-
-// =====================================================================
-// AUTO-CURRY IMPLEMENTATION
-// =====================================================================
-
-// wraps a multi-argument function to support step-by-step argument passing
-export const curry = (fn) => {
-  const arity = fn.length;
-  return function curried(...args) {
-    if (args.length >= arity) {
-      return fn(...args);
-    }
-    return (...nextArgs) => curried(...args, ...nextArgs);
-  };
-};
-
-export const curry = (fn) => curried(...args) => (args.length >= fn.length) ?  fn(...args) : (...nextArgs) => curried(...args, ...nextArgs);
-  
-// =====================================================================
-// 2. CURRIED FP UTILITIES (Reusable Pipeline Building Blocks)
-// =====================================================================
-
-// :::::: INTERNAL HELPERS
-
-const upperFirst = (word) => word.charAt(0).toUpperCase() + word.slice(1);
-const toWords = (value) => String(value)
-  .replace(/([a-z\d])([A-Z])/g, '$1 $2')
-  .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
-  .replace(/[\s\-_.]+/g, ' ')
-  .trim()
-  .toLowerCase()
-  .split(' ')
-  .filter(Boolean);
-
 // :::::: UNARY TRANSFORMS
 
 export const // curried array transformers
 map    = fn         => arr => arr.map(fn),
 filter = predicate  => arr => arr.filter(predicate),
 reduce = (fn, init) => arr => arr.reduce(fn, init);
-
-export const // curried string transformers
-capitalize     = str  => String(str).charAt(0).toUpperCase() + String(str).slice(1),
-join           = char => arr => arr.join(char),
-split          = char => str => str.split(char),
-toLowerCase    = str  => str.toLowerCase (),
-toUpperCase    = str  => str.toUpperCase (),
-toCamelCase    = str  => toWords(str).map((word, index) => index ? upperFirst(word) : word).join(''),    
-toConstantCase = str  => toWords(str).join('_').toUpperCase(),
-toKebabCase    = str  => toWords(str).join('-'),
-toPascalCase   = str  => toWords(str).map(upperFirst).join(''),
-toSnakeCase    = str  => toWords(str).join('_'),
-toTitleCase    = str  => toWords(str).map(upperFirst).join(' '),
-trim           = str  => str.trim      (),
-trimEnd        = str  => str.trimEnd   (),
-trimStart      = str  => str.trimStart (),
-unquote        = str  => String(str).replace(/^(['"`])([\s\S]*)\1$/, '$2');
 
 // Curried object getters
 export const prop    = key => obj => obj?.[key];
@@ -153,11 +91,6 @@ export const prop    = key => obj => obj?.[key];
 // =====================================================================
 // 1. COMBINATORS & CORE HELPERS
 // =====================================================================
-
-// Type and Instance Check Factories
-const isInstanceOf = ctor => v => typeof ctor !== 'undefined' && ctor !== null && v instanceof ctor;
-const isTypeOf     = type => v => typeof v    === type;
-const matches      = re   => v => typeof v    === 'string' && re.test(v);
 
 // Logic Combinators
 export const not = fn => (...args) => !fn(...args);
@@ -195,19 +128,6 @@ export const createPredicate = (fn, name) => {
   registry.set(id, fn);
   return fn;
 };
-
-// :::::: BASE PREDICATES
-
-export const isBlank  = createPredicate((v) => v == null || v === '', 'isBlank');
-export const isNumber = createPredicate((v) => typeof v === 'number' && !Number.isNaN(v), 'isNumber');
-export const isEven   = createPredicate((v) => Number.isInteger(v) && v % 2 === 0, 'isEven');
-export const isString = createPredicate((v) => typeof v === 'string', 'isString');
-export const isArray  = createPredicate(Array.isArray, 'isArray');
-
-// Alias mapping for standard constructor names like String, Array, etc.
-registry.set('String', isString);
-registry.set('Array', isArray);
-registry.set('blank', isBlank);
 
 // :::::: COMBINATORS
 
@@ -356,18 +276,6 @@ export const createPredicate = (fn, name) => {
 
   return fn;
 };
-
-// =====================================================================
-// BASE PREDICATES (All auto-register their 'String', 'string', etc. keys)
-// =====================================================================
-
-export const isString   = createPredicate(v => typeof v === 'string', 'isString');
-export const isArray    = createPredicate(Array.isArray, 'isArray');
-export const isNumber   = createPredicate(v => typeof v === 'number' && !Number.isNaN(v), 'isNumber');
-export const isBoolean  = createPredicate(v => typeof v === 'boolean', 'isBoolean');
-export const isObject   = createPredicate(v => Boolean(v) && typeof v === 'object' && !Array.isArray(v), 'isObject');
-export const isFunction = createPredicate(v => typeof v === 'function', 'isFunction');
-export const isBlank    = createPredicate(v => v == null || v === '', 'isBlank');
 ```
 
 ```javascript
