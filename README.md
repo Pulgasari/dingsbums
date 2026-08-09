@@ -7,12 +7,14 @@
 ```javascript
 import { match, isBlank, isNumber, isEven, and, is, pipe, trim, toUpperCase, map, filter, isEmail, curry } from './fp-lib.js';
 
+const isEvenNumber = and(isNumber, isEven);
+
 // 1. PATTERN MATCHING WITH OBJECT SYNTAX & FUNCTION KEYS
 const classify = match({
-  isBlank:                 'leer',
-  [and(isNumber, isEven)]: value => value * 100,
-  String:                  value => value.trim().toUpperCase(),
-  Array:                   value => `array mit ${value.length}`
+  isBlank      : 'leer',
+  isEvenNumber : value => value * 100,
+  String       : value => value.trim().toUpperCase(),
+  Array        : value => `array mit ${value.length}`
 }, () => 'unbekannt');
 
 console.log(classify(null));       // 'leer'
