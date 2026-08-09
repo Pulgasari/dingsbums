@@ -29,7 +29,7 @@ isFunction    = isTypeOf('function'),
 isSymbol      = isTypeOf('symbol'),
 isUndefined_  = isTypeOf('undefined'),
 isNull        = v => v === null,
-isNullish     = v => v == null,
+isNullish     = v => v ==  null,
 isDefined     = v => v !== undefined,
 isPrimitive   = v => v !== Object(v);
 
@@ -91,11 +91,11 @@ isFalsy       = v => !v && v !== 0 && v !== false,
 isFilled      = and(not(isBlank), not(isEmpty), not(isEmptyObject));
 
 export const // Formats & Parsing
-isAlphaNumeric = matches(/^[a-z0-9]+$/i),
-isBase64       = matches(/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/),
-isEmail        = matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/),
-isHexColor     = matches(/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i),
-isUUID         = matches(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i),
+isAlphaNumeric = isMatchOf(/^[a-z0-9]+$/i),
+isBase64       = isMatchOf(/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/),
+isEmail        = isMatchOf(/^[^\s@]+@[^\s@]+\.[^\s@]+$/),
+isHexColor     = isMatchOf(/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i),
+isUUID         = isMatchOf(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i),
 isJSON         = v => { if (!isString(v)) return false; try { JSON.parse(v); return true; } catch { return false; } },
 isURL          = v => { try { new URL(v); return true; } catch { return false; } },
 isHTML         = v => isString(v) && /^<([a-z]+)(\s[^>]*)?>.*<\/\1>$|^<([a-z]+)(\s[^>]*)?\/?>$/i.test(v.trim());
@@ -103,11 +103,11 @@ isHTML         = v => isString(v) && /^<([a-z]+)(\s[^>]*)?>.*<\/\1>$|^<([a-z]+)(
 export const // String Cases
 isLowerCase    = and(isString, v => v === v.toLowerCase()),
 isUpperCase    = and(isString, v => v === v.toUpperCase()),
-isCamelCase    = and(matches(/^[a-z][a-zA-Z0-9]*$/), not(isUpperCase)),
-isConstantCase = matches(/^[A-Z0-9]+(?:_[A-Z0-9]+)*$/),
-isKebabCase    = matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-isPascalCase   = matches(/^[A-Z][a-zA-Z0-9]*$/),
-isSnakeCase    = matches(/^[a-z0-9]+(?:_[a-z0-9]+)*$/);
+isCamelCase    = and(isMatchOf(/^[a-z][a-zA-Z0-9]*$/), not(isUpperCase)),
+isConstantCase = isMatchOf(/^[A-Z0-9]+(?:_[A-Z0-9]+)*$/),
+isKebabCase    = isMatchOf(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+isPascalCase   = isMatchOf(/^[A-Z][a-zA-Z0-9]*$/),
+isSnakeCase    = isMatchOf(/^[a-z0-9]+(?:_[a-z0-9]+)*$/);
 
 export const // Lists
 isEntriesList = v => isArray(v) && v.every(item => isArray(item) && item.length === 2);
