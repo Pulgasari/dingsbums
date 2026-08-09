@@ -492,4 +492,6 @@ for (const [name, fn]  of Object.entries(fns))
 API[name] = [fn, kind];
 
 const proto = { [NODE]: true, node: null };
+
+const API = mapAssign (API2);
 ```
