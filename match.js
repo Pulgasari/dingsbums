@@ -22,14 +22,15 @@ for (const [name, fn] of Object.entries(preds)) {
 
 // :::::: Dynamischer Konstruktor-Resolver & Rest wie gehabt...
 
+const withIs = key => 'is' + key.charAt(0).toUpperCase() + key.slice(1);
+
 export const resolveRule = (key) => {
   if (typeof key === 'function') return key;
 
   if (typeof key === 'string') {
-    if (registry.has(key)) return registry.get(key);
-
-    const withIs = 'is' + key.charAt(0).toUpperCase() + key.slice(1);
-    if (registry.has(withIs)) return registry.get(withIs);
+    const key2 = withIs(key);
+    if (registry.has(key))  return registry.get(key);
+    if (registry.has(key2)) return registry.get(key2);
 
     const TargetCtor = typeof globalThis !== 'undefined' ? globalThis[key] : null;
     if (typeof TargetCtor === 'function') {
