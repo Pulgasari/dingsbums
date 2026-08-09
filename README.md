@@ -542,3 +542,8 @@ for (const kind in API2)
 for (const name in API2[kind])
 API[name] = [API2[kind][name], kind];
 ```
+
+```js
+for (const kind in API2)
+Object.assign(API, API2[kind]);
+```
