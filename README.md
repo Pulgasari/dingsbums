@@ -119,6 +119,39 @@ export const shape = (schema) =>
   }, 'shape');
 ```
 
+```javascript
+import { match, isNumber, isString, isEven } from './core.js';
+import { hasLength, minLength, every, tuple, shape, propEq } from './predicates.js';
+
+const processData = match({
+  // 1. Array length matching
+  [hasLength(0)]:               () => 'Empty list',
+  [tuple(isString, isNumber)]:  ([name, age]) => `Tuple match: ${name} is${age}`,
+  [every(isNumber)]:            (arr) => `Array of numbers with sum ${arr.reduce((a, b) => a + b, 0)}`,
+  [minLength(5)]:               (arr) => `Large collection with ${arr.length} items`,
+
+  // 2. Object shape & property matching
+  [propEq('type', 'admin')]:    (user) => `Admin: ${user.name}`,
+  [shape({
+    role: 'user',
+    age:  isNumber,
+    active: true
+  })]:                          (user) => `Active user ${user.name}`,
+
+  // 3. Fallback for strings by length
+  [hasLength(3)]:               (str) => `3-char string: ${str}`
+}, () => 'Unknown shape');
+
+// Tests:
+processData([]);                        // "Empty list"
+processData(['Alice', 30]);             // "Tuple match: Alice is 30"
+processData([10, 20, 30]);              // "Array of numbers with sum 60"
+processData([1, 2, 3, 4, 5, 6]);        // "Large collection with 6 items"
+processData({ type: 'admin', name: 'Bob' }); // "Admin: Bob"
+processData({ role: 'user', name: 'Eve', age: 25, active: true }); // "Active user Eve"
+processData('cat');                     // "3-char string: cat"
+```
+
 ## function calls as keys
 
 ```javascript
