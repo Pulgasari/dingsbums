@@ -508,4 +508,6 @@ function* deepEntries(obj) {
 for (const [kind, name, fn] of deepEntries(API2))
 API[name] = [fn, kind];
 
+API = deepEntries(API2).map( ([kind, name, fn]) => { [name]: [fn, kind] };   
+
 ```
