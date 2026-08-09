@@ -4,16 +4,16 @@ import { and, not, or, testRule } from './core.js';
 
 // :::::: HELPERS
 
-// Type and Instance Check Factories
-const isInstanceOf = ctor => v => typeof ctor !== 'undefined' && ctor !== null && v instanceof ctor;
-const isTypeOf     = type => v => typeof v    === type;
-const matches      = re   => v => typeof v    === 'string' && re.test(v);
+const // Type and Instance Check Factories
+isInstanceOf = ctor   => v => typeof ctor !== 'undefined' && ctor !== null && v instanceof ctor,
+isTypeOf     = type   => v => typeof v    === type,
+isMatchOf    = regexp => v => typeof v    === 'string' && regexp.test(v);
 
 // Pattern Matcher (R.cond / switch-case replacement)
 const testRule = (rule, val) => {
   if (typeof rule === 'function') return rule(val);
-  if (typeof rule === 'boolean') return rule;
-  if (Array.isArray(rule)) return rule.every(r => testRule(r, val));
+  if (typeof rule === 'boolean')  return rule;
+  if (Array.isArray(rule))        return rule.every(r => testRule(r, val));
   return false;
 };
 
@@ -67,15 +67,14 @@ isBuffer       = v => typeof Buffer !== 'undefined' && Buffer.isBuffer(v);
 export const iterable       = v => v != null && typeof v[Symbol.iterator]      === 'function';
 export const asyncIterable  = v => v != null && typeof v[Symbol.asyncIterator] === 'function';
 
-// DOM & Environment (SSR-Safe)
-export const node         = isInstanceOf(typeof Node !== 'undefined' ? Node : null);
-export const domNode      = node;
-export const element      = isInstanceOf(typeof Element           !== 'undefined' ? Element           : null);
-export const fragment     = isInstanceOf(typeof DocumentFragment  !== 'undefined' ? DoumentFragment   : null);
-export const canvas       = isInstanceOf(typeof HTMLCanvasElement !== 'undefined' ? HTMLCanvasElement : null);
-export const elementish   = or(isElement, isFragment, isInstanceOf(typeof Document !== 'undefined' ? Document : null));
-export const realNodeList = isInstanceOf(typeof NodeList !== 'undefined' ? NodeList : null);
-export const nodeList     = v => (isRealNodeList(v) || isArray(v)) && [...v].every(node);
+export const // DOM & Environment (SSR-Safe)
+isNode         = isInstanceOf(typeof Node              !== 'undefined' ? Node              : null),
+isElement      = isInstanceOf(typeof Element           !== 'undefined' ? Element           : null),
+isFragment     = isInstanceOf(typeof DocumentFragment  !== 'undefined' ? DoumentFragment   : null),
+isCanvas       = isInstanceOf(typeof HTMLCanvasElement !== 'undefined' ? HTMLCanvasElement : null),
+isElementish   = or(isElement, isFragment, isInstanceOf(typeof Document !== 'undefined' ? Document : null)),
+isRealNodeList = isInstanceOf(typeof NodeList !== 'undefined' ? NodeList : null),
+isNodeList     = v => (isRealNodeList(v) || isArray(v)) && [...v].every(node);
 
 export const internalUrl  = v => isString(v) && typeof window !== 'undefined' &&  v.startsWith(window.location.origin);
 export const externalUrl  = v => isString(v) && typeof window !== 'undefined' && !v.startsWith(window.location.origin);
