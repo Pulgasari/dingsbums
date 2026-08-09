@@ -494,4 +494,18 @@ API[name] = [fn, kind];
 const proto = { [NODE]: true, node: null };
 
 const API = mapAssign (API2);
+
+// Yields [groupKey, itemKey, value] for 2-level nested objects
+function* deepEntries(obj) {
+  for (const [group, items] of Object.entries(obj)) {
+    for (const [key, val] of Object.entries(items)) {
+      yield [group, key, val];
+    }
+  }
+}
+
+// Single clean loop
+for (const [kind, name, fn] of deepEntries(API2))
+API[name] = [fn, kind];
+
 ```
