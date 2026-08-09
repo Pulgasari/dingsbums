@@ -435,3 +435,61 @@ export const resolveRule = (key) => {
   return () => false;
 };
 ```
+
+```javascript
+// Universal helpers supporting both curried each(obj)(fn) and direct each(obj, fn) call styles
+export const each = (obj, fn) => {
+  const run = cb => Object.entries(obj).forEach(cb);
+  return fn ? run(fn) : run;
+};
+
+export const eachKeys = (obj, fn) => {
+  const run = cb => Object.keys(obj).forEach(cb);
+  return fn ? run(fn) : run;
+};
+
+export const eachValues = (obj, fn) => {
+  const run = cb => Object.values(obj).forEach(cb);
+  return fn ? run(fn) : run;
+};
+
+
+// Helper for curried object iteration
+const each = obj => fn => Object.entries(obj).forEach(fn);
+
+// Populate the API object from API2 definition
+each(API2)(
+  ([kind, methods]) => each(methods)(
+    ([name, fn]) => API[name] = [fn, kind];
+  )
+);
+
+   each (API2) (([kind, methods])
+=> each (methods) (([name, fn]) 
+=> API[name] = [fn, kind]));
+
+each (API2) (a => each (a[1]) (b => API[b[0]] = [b[1], a[0] ));
+
+// Helper to flatten a 2-level object structure into tuples
+const flatEntries = obj =>
+  Object.entries(obj).flatMap(([kind, methods]) =>
+  Object.entries(methods).map(([name, fn]) => [kind, name, fn])
+  );
+
+// Single clean loop
+for (const [kind, name, fn] of flatEntries(API2)) API[name] = [fn, kind];
+eachFlat (API2) (([kind, name, fn]) => API[name] = [fn, kind] );
+eachFlat (API2, ([kind, name, fn]) => API[name] = [fn, kind] );
+
+const { entries } = Object;
+
+for (const [kind, fns] of entries(API2))
+for (const [name, fn]  of entries(fns))
+API[name] = [fn, kind];
+
+for (const [kind, fns] of Object.entries(API2))
+for (const [name, fn]  of Object.entries(fns))
+API[name] = [fn, kind];
+
+const proto = { [NODE]: true, node: null };
+```
