@@ -47,6 +47,78 @@ console.log(processEmailList([
 // Output: ["ALICE@TEST.COM", "BOB@WEB.DE"]
 ```
 
+##
+
+```javascript
+import { createPredicate } from './core.js';
+
+// =====================================================================
+// 1. LENGTH PREDICATES (Works for Arrays, Strings, Sets, Maps)
+// =====================================================================
+
+export const hasLength = (len) =>
+  createPredicate(
+    (v) => v != null && (v.length === len || v.size === len),
+    `hasLength_${len}`
+  );
+
+export const minLength = (min) =>
+  createPredicate(
+    (v) => v != null && ((v.length ?? v.size ?? -1) >= min),
+    `minLength_${min}`
+  );
+
+// =====================================================================
+// 2. ARRAY & CONTENT PREDICATES
+// =====================================================================
+
+// Checks if all items in array satisfy a predicate or match a value
+export const every = (pred) =>
+  createPredicate(
+    (v) => Array.isArray(v) && v.every(typeof pred === 'function' ? pred : (x) => x === pred),
+    'every'
+  );
+
+// Checks if at least one item satisfies a predicate
+export const some = (pred) =>
+  createPredicate(
+    (v) => Array.isArray(v) && v.some(typeof pred === 'function' ? pred : (x) => x === pred),
+    'some'
+  );
+
+// Matches array positional structure (e.g., [isString, isNumber])
+export const tuple = (...preds) =>
+  createPredicate(
+    (v) =>
+      Array.isArray(v) &&
+      v.length === preds.length &&
+      preds.every((p, i) => (typeof p === 'function' ? p(v[i]) : v[i] === p)),
+    'tuple'
+  );
+
+// =====================================================================
+// 3. OBJECT SHAPE & PROPERTY PREDICATES
+// =====================================================================
+
+// Matches specific property value or predicate
+export const propEq = (key, expected) =>
+  createPredicate((v) => {
+    if (v == null) return false;
+    const val = v[key];
+    return typeof expected === 'function' ? expected(val) : val === expected;
+  }, `propEq_${key}`);
+
+// Matches object shape/schema against predicates or explicit values
+export const shape = (schema) =>
+  createPredicate((v) => {
+    if (v == null || typeof v !== 'object' || Array.isArray(v)) return false;
+    return Object.entries(schema).every(([key, pred]) => {
+      const val = v[key];
+      return typeof pred === 'function' ? pred(val) : val === pred;
+    });
+  }, 'shape');
+```
+
 ## function calls as keys
 
 ```javascript
