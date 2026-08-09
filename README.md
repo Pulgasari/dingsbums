@@ -526,3 +526,13 @@ for (const [name, fn]  of fns.entries)
 API[name] = [fn, kind];
 
 ```
+
+```javascript
+const $E = Object.entries;
+const $K = Object.keys;
+const $V = Object.values;
+
+for (const [kind, fns] of $(API2))
+for (const [name, fn]  of $(fns))
+API[name] = [fn, kind];
+```
