@@ -491,6 +491,10 @@ for (const [kind, fns] of Object.entries(API2))
 for (const [name, fn]  of Object.entries(fns))
 API[name] = [fn, kind];
 
+for (const [kind, fns] of API2.entries)
+for (const [name, fn]  of  fns.entries)
+API[name] = [fn, kind];
+
 const proto = { [NODE]: true, node: null };
 
 const API = mapAssign (API2);
